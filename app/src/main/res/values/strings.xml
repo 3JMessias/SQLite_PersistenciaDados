@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SQLite_PersistenciaDados</string>
+    <string name="txt_nome">Nome</string>
+    <string name="txt_telefone">Telefone</string>
+    <string name="edt_nome">Digite o seu nome</string>
+    <string name="edt_telefone">Digite o seu Telefone</string>
+    <string name="btn_salvar">Salvar</string>
+    <string name="btn_cancelar">Cancelar</string>
+
+</resources>
