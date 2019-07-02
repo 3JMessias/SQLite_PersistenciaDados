@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                     if(!nome.isEmpty() && !telefone.isEmpty()){
                         contatoDAO.salvar(contato);
                         Toast.makeText(getApplicationContext(), "Salvando novo Contato", Toast.LENGTH_SHORT).show();
-                        bLimpar.callOnClick();
+//                        bLimpar.callOnClick();
                     }
 
             }
