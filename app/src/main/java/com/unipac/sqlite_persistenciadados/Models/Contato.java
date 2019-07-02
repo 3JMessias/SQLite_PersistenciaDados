@@ -2,30 +2,19 @@ package com.unipac.sqlite_persistenciadados.Models;
 
 import java.io.Serializable;
 
-public class Contato implements Serializable {
+public class Contato implements Serializable, Comparable<Contato> {
 
-public static final String TABLE_CONTATO = "contato";
-    public static final String ID = "id";
-    public static final String NOME = "nome";
-    public static final String TELEFONE = "telefone";
+    private long id;
+    private String nome;
+    private String telefone;
 
-    public static final String DATABASE_CREATE = "create table"
-            + TABLE_CONTATO + "( "
-            + ID + "integer primary key autoincrement, "
-            + NOME + "text not null, "
-            + TELEFONE + "text not null);";
-
-    int id;
-    String nome;
-    String telefone;
-
-    public Contato() {
-    }
-
-    public Contato(int id, String nome, String telefone) {
+    public Contato(long id, String nome, String telefone) {
         this.id = id;
         this.nome = nome;
         this.telefone = telefone;
+    }
+
+    public Contato() {
     }
 
     public Contato(String nome, String telefone) {
@@ -33,11 +22,11 @@ public static final String TABLE_CONTATO = "contato";
         this.telefone = telefone;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -55,5 +44,10 @@ public static final String TABLE_CONTATO = "contato";
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    @Override
+    public int compareTo(Contato contato) {
+        return getNome().compareTo(contato.getNome());
     }
 }

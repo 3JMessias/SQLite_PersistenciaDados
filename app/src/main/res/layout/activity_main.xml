@@ -20,8 +20,8 @@
 
         <LinearLayout
             android:id="@+id/lay_Main"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="388dp"
+            android:layout_height="343dp"
             android:clickable="false"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -65,32 +65,59 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
                 android:layout_weight="0"
                 android:animationCache="true"
                 android:baselineAligned="false"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingTop="10dp">
 
                 <Button
                     android:id="@+id/main_btnCancelar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginTop="5dp"
                     android:layout_weight="0"
-                    android:text="@string/btn_cancelar"
+                    android:backgroundTint="#D67168"
+                    android:text="@string/btn_limpar"
                     android:textAlignment="center" />
 
                 <Button
                     android:id="@+id/main_btnSalvar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="30dp"
                     android:layout_weight="0"
+                    android:backgroundTint="#26E0B6"
+                    android:drawableLeft="@android:drawable/ic_input_add"
                     android:text="@string/btn_salvar"
                     android:textAlignment="center" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:orientation="horizontal"
+                android:paddingTop="10dp">
+
+                <Button
+                    android:id="@+id/main_btnListarContatos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="0"
+                    android:backgroundTint="#80B4F3"
+                    android:drawableRight="@android:drawable/ic_menu_slideshow"
+                    android:text="Ver Lista de Contatos" />
             </LinearLayout>
 
         </LinearLayout>

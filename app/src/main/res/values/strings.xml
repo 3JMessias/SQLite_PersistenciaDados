@@ -6,5 +6,6 @@
     <string name="edt_telefone">Digite o seu Telefone</string>
     <string name="btn_salvar">Salvar</string>
     <string name="btn_cancelar">Cancelar</string>
+    <string name="btn_limpar">Limpar</string>
 
 </resources>

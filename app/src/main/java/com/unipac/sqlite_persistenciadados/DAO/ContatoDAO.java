@@ -4,133 +4,123 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import com.unipac.sqlite_persistenciadados.DatabaseHandler;
+
+import com.unipac.sqlite_persistenciadados.Infra.HelperDB;
 import com.unipac.sqlite_persistenciadados.Models.Contato;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.unipac.sqlite_persistenciadados.Models.Contato.*;
-
 public class ContatoDAO {
-    private DatabaseHandler dbHandler = null;
 
-    private String[] allCollumns = {Contato.ID, Contato.NOME, Contato.TELEFONE};
+    public static final String TABLE_CONTATO = "contato";
+
+    public static final String ID = "_id";
+    public static final String NOME = "nome";
+    public static final String TELEFONE = "telefone";
+
+    public static final String DATABASE_CREATE = "create table "
+            + TABLE_CONTATO + "( "
+            + ID + " integer primary key autoincrement, "
+            + NOME + " text not null, "
+            + TELEFONE + " text not null);";
+
+    private HelperDB helperDB;
+
+    private String[] allColumns = {
+            ContatoDAO.ID,
+            ContatoDAO.NOME,
+            ContatoDAO.TELEFONE
+    };
 
     public ContatoDAO(Context context){
-        dbHandler = new DatabaseHandler(context);
+        helperDB = new HelperDB(context);
     }
 
-    //Adicionar novo Contato
-    public boolean addContato(Contato contato){
-        SQLiteDatabase db = dbHandler.getWritableDatabase(); //abre o banco para leitura e gravação
-
-        ContentValues values = new ContentValues(); //cria o objeto para preencher valores nas tabelas
-
-        values.put(contato.NOME, contato.getNome()); //Contato Nome
-        values.put(contato.TELEFONE, contato.getTelefone()); //Contato Telefone
-
-        //Inserindo a linha
-        long insertId = db.insert(contato.TABLE_CONTATO, null, values);
-        return insertId > 0 ? Boolean.TRUE : Boolean.FALSE;
-
-//        db.close();
-
-    }
-
-    //Pega um contato pelo seu telefone
-    public Contato getContato(String telefone){
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
-        Cursor cursor = db.query(Contato.TABLE_CONTATO, allCollumns, TELEFONE + " = " +
-                telefone, null,null,null,null);
-        cursor.moveToFirst();
-
-        Contato contato = new Contato();
-
-        contato.setId(cursor.getInt(0));
-        contato.setNome(cursor.getString(1));
-        contato.setTelefone(cursor.getString(2));
-
-        return contato;
-
-    }
-
-    //Pega todos os contatos
-    public List<Contato> getAllContatos(){
-        //Abrir o banco para leitura
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_CONTATO, allCollumns, null, null, null,null, null,null);
-
-        List<Contato>contatoList = new ArrayList<>();
-
-//        String selectQuery = "SELECT * FROM" + contato.TABLE_NAME;
-//        Cursor cursor = db.rawQuery(selectQuery, null);
-        //Pega os valores resultantes e seta no objeto, movendo sempre para o próximo cursor.
-        if(cursor.moveToFirst()){
-            int idxId = cursor.getColumnIndex(Contato.ID);
-            int idxNome = cursor.getColumnIndex(Contato.NOME);
-            int idxTelefone = cursor.getColumnIndex(TELEFONE);
-
-            do{
-                Contato contato = new Contato();
-                contatoList.add(contato);
-
-                contato.setId(Integer.parseInt(cursor.getString(idxId)));
-                contato.setNome(cursor.getString(idxNome));
-                contato.setTelefone(cursor.getString(idxTelefone));
-
-                //Adiciona o contato na lista de contatos.
-                contatoList.add(contato);
-            }while (cursor.moveToNext());
-        }
-        cursor.close();
-        //Retorna a lista de contatos
-        return contatoList;
-
-    }
-
-    //Pega o numero de contatos (Quantidade de contatos)
-    public int getContatosCount(){
-        String countQuery = "SELECT * FROM " + Contato.TABLE_CONTATO;
-
-        //Abrir o banco para leitura
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
-
-        //Passa a query para ser executada
-        Cursor cursor = db.rawQuery(countQuery, null);
-
-        //Retorna o total de contatos.
-        return cursor.getCount();
-    }
-
-
-
-    //Atualizar o contato
-    public int updateContato(Contato contato) {
-        SQLiteDatabase db = dbHandler.getWritableDatabase(); //Abre o banco para leitura e gravação
+    public boolean salvar(Contato contato){
+        SQLiteDatabase database = helperDB.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(contato.NOME, contato.getNome());
-        values.put(contato.TELEFONE, contato.getTelefone());
+        if(contato.getId() != 0){
+            values.put(ContatoDAO.ID, contato.getId());
+        }
+        values.put(ContatoDAO.NOME, contato.getNome());
+        values.put(ContatoDAO.TELEFONE, contato.getTelefone());
 
-        //Faz update no registro
-        return db.update(TABLE_CONTATO, values, contato.ID + " =? ",
-                new String[] {String.valueOf(contato.getId())});
+        long insertId = database.insert(ContatoDAO.TABLE_CONTATO, null, values);
+
+        return insertId > 0 ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+    public Contato buscarPorId(long id){
+        SQLiteDatabase database = helperDB.getReadableDatabase();
+
+        Cursor cursor = database.query(ContatoDAO.TABLE_CONTATO, allColumns, ContatoDAO.ID + "='"
+                + id + "'", null, null,null,null);
+        cursor.moveToFirst();
+
+        return cursorToObject(cursor);
     }
 
 
-//    Deletando o contato por ID
-    public void deleteContato(Contato contato){
-        SQLiteDatabase db = dbHandler.getWritableDatabase(); //Abre o banco para leitura e gravação
-// **Erro
-        db.delete(TABLE_CONTATO, contato.ID + "=?",
-                        new String[]{String.valueOf(contato.getId())});
+    public boolean deletarContato(Contato contato){
+        SQLiteDatabase database = helperDB.getWritableDatabase();
 
-        db.close(); // fecha o banco
-//
-//
-//    }
+        ContentValues values = new ContentValues();
+        if(contato.getId() != 0){
+            values.put(ContatoDAO.ID, contato.getId());
+        }
+        values.put(ContatoDAO.NOME, contato.getNome());
+        values.put(ContatoDAO.TELEFONE, contato.getTelefone());
 
+        long insertId = database.insert(ContatoDAO.TABLE_CONTATO, null, values);
 
-}}
+        return insertId > 0 ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+    public ArrayList<Contato> buscarTodos(){
+        SQLiteDatabase database = helperDB.getReadableDatabase();
+
+        Cursor cursor = database.query(ContatoDAO.TABLE_CONTATO, allColumns, null, null,null,null,null);
+        ArrayList<Contato> contatos = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+            int indId = cursor.getColumnIndex(ContatoDAO.ID);
+            int indNome = cursor.getColumnIndex(ContatoDAO.NOME);
+            int indTelefone = cursor.getColumnIndex(ContatoDAO.TELEFONE);
+
+            do {
+                Contato contato = new Contato();
+
+                contato.setId(cursor.getLong(indId));
+                contato.setNome(cursor.getString(indNome));
+                contato.setTelefone(cursor.getString(indTelefone));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return contatos;
+    }
+
+    public boolean verificarSeContatoExiste(String telefone){
+        SQLiteDatabase database = helperDB.getReadableDatabase();
+
+        Cursor cursor = database.query(ContatoDAO.TABLE_CONTATO, allColumns, ContatoDAO.TELEFONE + "='"
+                + telefone + "'", null, null,null,null);
+
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
+    }
+
+    private Contato cursorToObject(Cursor cursor){
+        Contato contato = new Contato();
+        contato.setId(cursor.getLong(0));
+        contato.setNome(cursor.getString(1));
+        contato.setTelefone(cursor.getString(2));
+        return contato;
+    }
+}

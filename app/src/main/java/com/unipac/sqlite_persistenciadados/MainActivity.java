@@ -1,5 +1,6 @@
 package com.unipac.sqlite_persistenciadados;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,7 +15,11 @@ public class MainActivity extends AppCompatActivity {
     private EditText varNome;
     private EditText varTelefone;
     private Button bSalvar;
-    private Button bCancelar;
+    private Button bVerContatos;
+    private Button bLimpar;
+    private long idContato;
+    Contato contato = new Contato();
+
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -24,9 +29,8 @@ public class MainActivity extends AppCompatActivity {
         varNome = findViewById(R.id.main_edtNome);
         varTelefone = findViewById(R.id.main_edtTelefone);
         bSalvar = findViewById(R.id.main_btnSalvar);
-        bCancelar = findViewById(R.id.main_btnCancelar);
-
-
+        bLimpar = findViewById(R.id.main_btnCancelar);
+        bVerContatos = findViewById(R.id.main_btnListarContatos);
 
         bSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -36,15 +40,16 @@ public class MainActivity extends AppCompatActivity {
                     String telefone = varTelefone.getText().toString();
                     Contato contato = new Contato(nome, telefone);
                     if(!nome.isEmpty() && !telefone.isEmpty()){
-                        contatoDAO.addContato(contato);
+                        contatoDAO.salvar(contato);
                         Toast.makeText(getApplicationContext(), "Salvando novo Contato", Toast.LENGTH_SHORT).show();
+                        bLimpar.callOnClick();
                     }
 
             }
 
         });
 
-        bCancelar.setOnClickListener(new View.OnClickListener() {
+        bLimpar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 varNome.setText("");
@@ -53,5 +58,28 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        bVerContatos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContatoDAO contatoDAO = new ContatoDAO(getBaseContext());
+
+//                long id = contato.getId();
+                String nome = varNome.getText().toString();
+                String telefone = varTelefone.getText().toString();
+
+                Contato contato = new Contato(nome,telefone);
+                if(!contatoDAO.verificarSeContatoExiste(telefone)){
+                    contatoDAO.salvar(contato);
+                    Toast.makeText(getApplicationContext(), "Contato Cadastrado!",Toast.LENGTH_SHORT).show();
+                }
+
+
+                Intent intent = new Intent(MainActivity.this, ListaContatosActivity.class);
+                intent.putExtra("idContatoSelec", contato.getId());
+                startActivity(intent);
+            }
+        });
+
 
     }}
